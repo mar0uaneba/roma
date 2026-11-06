@@ -42,6 +42,23 @@
   --radius-md: 2px;
   --radius-lg: 2px;
   --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+
+}
+
+@theme {
+  /* Admin (dark) palette */
+  --color-adm-bg: #09090a;
+  --color-adm-panel: #111113;
+  --color-adm-raised: #18181b;
+  --color-adm-line: #26262b;
+  --color-adm-text: #ececef;
+  --color-adm-muted: #8d8d96;
+  --color-adm-accent: #ff6b1a;
+  --color-adm-accent-strong: #e5550a;
+  --color-adm-green: #34d399;
+  --color-adm-amber: #fbbf24;
+  --color-adm-red: #f87171;
+  --color-adm-blue: #60a5fa;
 }
 
 html {
@@ -203,4 +220,46 @@ details > summary {
 
 details > summary::-webkit-details-marker {
   display: none;
+}
+
+/* ── Admin ──────────────────────────────────────────────── */
+.admin-root {
+  background: var(--color-adm-bg);
+  color: var(--color-adm-text);
+  color-scheme: dark;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-root ::selection {
+  background: var(--color-adm-accent);
+  color: #0b0b0c;
+}
+
+.admin-root :focus-visible {
+  outline: 2px solid var(--color-adm-accent);
+  outline-offset: 2px;
+}
+
+.admin-input {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--color-adm-line);
+  background: var(--color-adm-bg);
+  padding: 0.55rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--color-adm-text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.admin-input:focus {
+  border-color: var(--color-adm-accent);
+}
+
+.admin-input::placeholder {
+  color: #5d5d66;
+}
+
+textarea.admin-input {
+  min-height: 6rem;
 }

@@ -1,20 +1,18 @@
 import { Suspense } from "react";
 import { LoginScreen } from "@/components/admin/login-screen";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { isAdminPasswordSet } from "@/lib/admin/session";
 
-export default function Page({
-  searchParams,
-}: {
-  searchParams: Promise<{ erreur?: string }>;
-}) {
+export const metadata = { title: "Sign in" };
+
+export default function Page({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-ink" />}>
+    <Suspense fallback={<div className="min-h-screen" />}>
       <Login searchParams={searchParams} />
     </Suspense>
   );
 }
 
-async function Login({ searchParams }: { searchParams: Promise<{ erreur?: string }> }) {
-  const { erreur } = await searchParams;
-  return <LoginScreen configured={isSupabaseConfigured()} accessDenied={erreur === "acces"} />;
+async function Login({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { err } = await searchParams;
+  return <LoginScreen error={typeof err === "string" ? err : undefined} configured={isAdminPasswordSet()} />;
 }

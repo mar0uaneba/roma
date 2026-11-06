@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Logo } from "@/components/brand/logo";
 import { useI18n } from "@/components/i18n/locale-provider";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
+import { CartButton } from "@/components/shop/cart-button";
 import { Button } from "@/components/ui/button";
 import { localePath } from "@/lib/i18n/config";
 import { navItems } from "@/lib/site";
@@ -76,12 +77,14 @@ export function Header() {
           })}
         </nav>
         <div className="hidden items-center gap-3 md:flex">
+          <CartButton className={overHero ? "border-background/30 hover:bg-background/10" : "border-line hover:border-ink/40"} />
           <LanguageSwitcher className={overHero ? "border-background/30 hover:bg-background/10" : "border-line hover:border-ink/40"} />
           <Button asChild>
             <Link href={localePath(lang, "/contact")}>{t.common.requestQuote}</Link>
           </Button>
         </div>
         <div className="flex items-center gap-2 md:hidden">
+          <CartButton className={overHero ? "border-background/30" : "border-line"} />
           <LanguageSwitcher className={overHero ? "border-background/30" : "border-line"} />
           <Dialog.Root open={open} onOpenChange={setOpen}>
             <Dialog.Trigger asChild>

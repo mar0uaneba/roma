@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   partialPrefetching: true,
   experimental: {
     globalNotFound: true,
+    serverActions: {
+      bodySizeLimit: "5mb",
+    },
   },
   images: {
     remotePatterns: [

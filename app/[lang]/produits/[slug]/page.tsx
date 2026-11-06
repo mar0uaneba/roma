@@ -7,7 +7,9 @@ import { ProductCard } from "@/components/catalog/product-card";
 import { WhatsAppIcon } from "@/components/brand/whatsapp-icon";
 import { Reveal } from "@/components/motion/reveal";
 import { Button } from "@/components/ui/button";
-import { getCategories, getCategory } from "@/lib/catalog";
+import { getCategories, getCategory, isPurchasable } from "@/lib/catalog";
+import { AddToCart } from "@/components/shop/add-to-cart";
+import { formatMoney } from "@/lib/shop/money";
 import { format, getDictionary, isLocale, languageAlternates, localePath, locales } from "@/lib/i18n";
 import { getLocalizedProducts, getProduct, getPublicProducts } from "@/lib/products";
 import { site, whatsappHref } from "@/lib/site";
@@ -101,23 +103,53 @@ export default async function Page({ params }: PageProps<"/[lang]/produits/[slug
               </dd>
             </div>
           </dl>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button asChild size="lg">
-              <Link href={localePath(lang, `/contact?produit=${product.slug}`)}>{t.product.request}</Link>
-            </Button>
-            {whatsapp ? (
-              <Button asChild size="lg" variant="outline">
-                <a href={whatsapp} target="_blank" rel="noopener noreferrer">
-                  <WhatsAppIcon className="size-4" />
-                  {t.product.askWhatsapp}
-                </a>
+          {isPurchasable(product) ? (
+            <div className="mt-8 border-t border-line pt-8">
+              <p className="text-xs uppercase tracking-[0.18em] text-muted">{t.shop.priceFrom}</p>
+              <p className="mt-2 flex flex-wrap items-baseline gap-3">
+                <span className="font-serif text-4xl text-ink ltr-nums">{formatMoney(product.price!, lang)}</span>
+                {product.compareAtPrice && product.compareAtPrice > product.price! ? (
+                  <span className="text-lg text-muted line-through ltr-nums">{formatMoney(product.compareAtPrice, lang)}</span>
+                ) : null}
+                {product.unit ? <span className="text-muted">{format(t.shop.perUnit, { unit: product.unit })}</span> : null}
+              </p>
+              {product.minQty && product.minQty > 1 ? <p className="mt-1 text-sm text-muted">{format(t.shop.minQty, { n: product.minQty })}</p> : null}
+              <div className="mt-5">
+                <AddToCart slug={product.slug} minQty={product.minQty ?? 1} name={product.name} />
+              </div>
+              <p className="mt-3 text-sm text-muted">{t.shop.vatNote}</p>
+              <div className="mt-6 flex flex-wrap gap-4 text-sm">
+                <Link href={localePath(lang, `/contact?produit=${product.slug}`)} className="underline decoration-accent underline-offset-4">
+                  {t.common.requestQuote}
+                </Link>
+                {whatsapp ? (
+                  <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 underline underline-offset-4">
+                    <WhatsAppIcon className="size-4" />
+                    {t.product.askWhatsapp}
+                  </a>
+                ) : null}
+              </div>
+            </div>
+          ) : (
+            <div className="mt-8 flex flex-wrap gap-3">
+              {product.status === "sold_out" ? <p className="w-full text-sm font-medium text-accent">{t.shop.soldOut}</p> : null}
+              <Button asChild size="lg">
+                <Link href={localePath(lang, `/contact?produit=${product.slug}`)}>{t.product.request}</Link>
               </Button>
-            ) : (
-              <Button asChild size="lg" variant="outline">
-                <Link href={localePath(lang, "/produits")}>{t.common.backToCatalog}</Link>
-              </Button>
-            )}
-          </div>
+              {whatsapp ? (
+                <Button asChild size="lg" variant="outline">
+                  <a href={whatsapp} target="_blank" rel="noopener noreferrer">
+                    <WhatsAppIcon className="size-4" />
+                    {t.product.askWhatsapp}
+                  </a>
+                </Button>
+              ) : (
+                <Button asChild size="lg" variant="outline">
+                  <Link href={localePath(lang, "/produits")}>{t.common.backToCatalog}</Link>
+                </Button>
+              )}
+            </div>
+          )}
         </Reveal>
       </div>
       {related.length > 0 ? (

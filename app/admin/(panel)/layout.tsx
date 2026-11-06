@@ -1,24 +1,29 @@
 import { Suspense, type ReactNode } from "react";
-import { redirect } from "next/navigation";
+import { signOutAction } from "@/app/actions/admin";
+import { CleanFlashParams } from "@/components/admin/client";
 import { AdminShell } from "@/components/admin/shell";
-import { getAdminContext } from "@/lib/admin";
+import { Loading } from "@/components/admin/ui";
+import { requireAdmin } from "@/lib/admin/auth";
+import { countOrders, isDemo, listQuotes } from "@/lib/shop/repo";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <Suspense fallback={<div className="px-8 py-16 text-sm text-muted">Chargement de l&apos;administration…</div>}>
+    <Suspense fallback={<div className="admin-root min-h-screen p-8"><Loading /></div>}>
       <Guard>{children}</Guard>
     </Suspense>
   );
 }
 
 async function Guard({ children }: { children: ReactNode }) {
-  const context = await getAdminContext();
-  if (context.configured && context.role !== "admin") {
-    redirect("/admin/login?erreur=acces");
-  }
-
+  await requireAdmin();
+  const [counts, quotes] = await Promise.all([countOrders().catch(() => null), listQuotes().catch(() => [])]);
   return (
-    <AdminShell email={context.email} setup={!context.configured}>
+    <AdminShell
+      demo={isDemo()}
+      signOut={signOutAction}
+      counts={{ open: counts?.open ?? 0, drafts: counts?.drafts ?? 0, quotes: quotes.filter((quote) => quote.status === "new").length }}
+    >
+      <CleanFlashParams />
       {children}
     </AdminShell>
   );

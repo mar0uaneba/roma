@@ -13,8 +13,8 @@ export const metadata: Metadata = {
 
 export default function AdminRootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="fr" dir="ltr" className={`${fontVariables} h-full antialiased`}>
-      <body className="min-h-full bg-background font-sans text-foreground">
+    <html lang="en" dir="ltr" className={`${fontVariables} h-full antialiased`}>
+      <body className="admin-root min-h-full font-sans">
         {children}
         <Toaster position="top-center" />
       </body>

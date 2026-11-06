@@ -4,11 +4,12 @@ import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useI18n } from "@/components/i18n/locale-provider";
-import type { Product } from "@/lib/catalog";
+import { isPurchasable, type Product } from "@/lib/catalog";
+import { formatMoney } from "@/lib/shop/money";
 import { localePath } from "@/lib/i18n/config";
 
 export function ProductCard({ product, categoryName }: { product: Product; categoryName?: string }) {
-  const { lang } = useI18n();
+  const { lang, t } = useI18n();
 
   return (
     <Link href={localePath(lang, `/produits/${product.slug}`)} className="group block">
@@ -28,6 +29,16 @@ export function ProductCard({ product, categoryName }: { product: Product; categ
       {categoryName ? <p className="mt-4 text-xs uppercase tracking-[0.18em] text-muted">{categoryName}</p> : null}
       <h3 className="mt-1 font-serif text-2xl text-ink transition-colors group-hover:text-accent">{product.name}</h3>
       <p className="mt-2 text-sm leading-6 text-muted">{product.summary}</p>
+      <p className="mt-3 text-sm font-medium text-ink">
+        {isPurchasable(product) ? (
+          <span className="ltr-nums">{formatMoney(product.price!, lang)}</span>
+        ) : product.status === "sold_out" ? (
+          <span className="text-accent">{t.shop.soldOut}</span>
+        ) : (
+          <span className="text-muted">{t.shop.onQuote}</span>
+        )}
+        {isPurchasable(product) && product.unit ? <span className="font-normal text-muted"> · {product.unit}</span> : null}
+      </p>
     </Link>
   );
 }

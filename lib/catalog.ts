@@ -36,6 +36,18 @@ export type Product = {
   published: boolean;
   /** Arabic content. Missing fields fall back to French. */
   ar?: Partial<ProductTranslation>;
+  /** Shop fields, managed in the admin. A product without a price is "on quote". */
+  price?: number | null;
+  compareAtPrice?: number | null;
+  costPrice?: number | null;
+  stock?: number | null;
+  status?: "active" | "hidden" | "sold_out";
+  unit?: string | null;
+  unitAr?: string | null;
+  minQty?: number;
+  sku?: string | null;
+  images?: string[];
+  feedExcluded?: boolean;
 };
 
 export type Category = {
@@ -480,7 +492,13 @@ export function localizeProduct(product: Product, locale: Locale): Product {
     applications: ar.applications?.length ? ar.applications : product.applications,
     formats: ar.formats?.length ? ar.formats : product.formats,
     imageAlt: ar.imageAlt || product.imageAlt,
+    unit: product.unitAr || product.unit,
   };
+}
+
+/** A product can be bought online when it has a price and is not sold out. */
+export function isPurchasable(product: Product) {
+  return typeof product.price === "number" && product.price > 0 && product.status !== "sold_out";
 }
 
 export function isCategorySlug(value: string | undefined): value is CategorySlug {

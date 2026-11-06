@@ -27,6 +27,15 @@ The public site is bilingual, **French and Arabic** (`/fr/...` and `/ar/...`, Ar
 - RTL: layout uses logical utilities (`ms-`, `pe-`, `start-`, `end-`), and `app/globals.css` removes letter-spacing and italics on Arabic text.
 - Quote requests store the visitor's language (`quote_requests.locale`) and show an `AR` badge in the admin. Product, range and sector values sent by the form stay in French so the team reads one language.
 
+## Shop and admin (phase 1)
+
+- **Shop**: products with a price get an “Ajouter au panier” button. Cart is kept in the browser; checkout (`/fr/commande`, `/ar/commande`) creates an order paid **cash on delivery** (bank transfer optional in Settings). Prices are always recomputed on the server (`app/api/orders/route.ts`). Products without a price stay “on quote”.
+- **Admin** (`/admin`, English, dark UI): password login (`ADMIN_PASSWORD`), HMAC-signed 12 h cookie, 5 failed attempts per IP per 15 min. Checked in `proxy.ts`, in the admin layout, in every page and in every server action (`requireAdmin`).
+- Pages: Overview (setup checklist, revenue, margins, bestsellers), Orders (tabs, search, CSV, status actions, freight, margin, e-mail composer, packing slip, history), Drafts (offer link valid 14 days, offer e-mail with confirm button), Quote requests (→ draft), Products (price, cost, stock, status, photos, feed exclusion, bulk actions), Customers & CRM (stages, tags, notes, e-mail history with sandboxed preview), Payments (cash to collect), Settings.
+- Customer e-mails (order received, confirmed, offer, shipped, delivery slot, cancellation, free message) are sent in the customer's language (FR/AR) through Resend and stored in `email_log`.
+- Without the database the admin runs in **demo mode** with sample data and saves nothing.
+- Phase 2: visitors & Morocco map (cookieless) and visitor bans. Phase 3: Google Merchant feed, ads spend, abandoned-checkout reminders.
+
 ## Scripts
 
 ```bash
