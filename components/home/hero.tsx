@@ -155,7 +155,7 @@ export function Hero({ slides, whatsapp }: { slides: HeroSlide[]; whatsapp: stri
       {/* Slide indicator */}
       {slides.length > 1 ? (
         <div
-          className="absolute bottom-6 end-5 z-10 w-[min(20rem,calc(100%-2.5rem))] md:bottom-10 md:end-[max(1.25rem,calc((100vw-72rem)/2+1.25rem))]"
+          className="absolute bottom-6 end-5 z-10 hidden w-[min(20rem,calc(100%-2.5rem))] lg:block md:bottom-10 md:end-[max(1.25rem,calc((100vw-72rem)/2+1.25rem))]"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
