@@ -1,0 +1,206 @@
+@import "tailwindcss";
+
+/* ── Design tokens ─────────────────────────────────────────── */
+:root {
+  --background: #f4efe6;
+  --foreground: #161411;
+  --card: #fbf7f1;
+  --muted: #6d645b;
+  --line: #ddd4c6;
+  --accent: #c5161d;
+  --accent-strong: #9d1016;
+  --accent-foreground: #fff8f4;
+  --ink: #0e0d0c;
+  --gold: #a68456;
+  --kraft: #c9a678;
+
+  --app-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --app-serif: var(--font-fraunces), ui-serif, Georgia, serif;
+}
+
+/* Arabic typography: Plex Sans Arabic for text, Noto Kufi Arabic for display. */
+:root[lang|="ar"] {
+  --app-sans: var(--font-plex-ar), var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --app-serif: var(--font-kufi), var(--font-plex-ar), ui-serif, serif;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-ink: var(--ink);
+  --color-gold: var(--gold);
+  --color-kraft: var(--kraft);
+  --font-sans: var(--app-sans);
+  --font-serif: var(--app-serif);
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ── Arabic adjustments ─────────────────────────────────────
+   Unlayered rules win over Tailwind utilities, which live in a layer.
+   Letter-spacing breaks Arabic joining, italics do not exist in Arabic,
+   and tight Latin display leading clips Arabic ascenders. */
+[dir="rtl"] * {
+  letter-spacing: 0 !important;
+}
+
+[dir="rtl"] .italic,
+[dir="rtl"] em {
+  font-style: normal;
+}
+
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] .font-serif {
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+[dir="rtl"] .uppercase {
+  text-transform: none;
+}
+
+/* Numbers, emails and phone numbers stay left-to-right inside Arabic text. */
+.ltr-nums {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* ── Motion ─────────────────────────────────────────────── */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scroll-cue {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(200%);
+  }
+}
+
+.rise {
+  animation: rise 0.9s var(--ease-out-expo) both;
+}
+
+.rise-2 {
+  animation-delay: 0.12s;
+}
+
+.rise-3 {
+  animation-delay: 0.24s;
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 40s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.scroll-cue-line {
+  animation: scroll-cue 1.8s var(--ease-out-expo) infinite;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .media-zoom {
+    transition: transform 0.9s var(--ease-out-expo);
+  }
+
+  .group:hover .media-zoom,
+  .group:focus-visible .media-zoom {
+    transform: scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .rise,
+  .marquee-track,
+  .scroll-cue-line {
+    animation: none;
+  }
+}
+
+/* Subtle paper grain used on dark sections. Pure CSS, no image request. */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.7) 0.6px, transparent 0.6px);
+  background-size: 3px 3px;
+  mix-blend-mode: overlay;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* FAQ disclosure marker */
+details > summary {
+  list-style: none;
+}
+
+details > summary::-webkit-details-marker {
+  display: none;
+}
