@@ -136,6 +136,7 @@ ${options.preheader ? `<div style="display:none;max-height:0;overflow:hidden;opa
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:${brand.paper};border:1px solid ${brand.line}">
 <tr><td style="background:${brand.ink};padding:26px 34px" dir="ltr">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+    <td style="vertical-align:middle;width:58px"><img src="${esc(site.url)}/brand/emblem-96.png" width="46" height="46" alt="Roma Pack" style="display:block;border:0;border-radius:50%"></td>
     <td style="vertical-align:middle">
       <div style="font-family:Georgia,serif;font-size:22px;letter-spacing:6px;color:#f4efe6;line-height:1">ROMA</div>
       <div style="font-family:Arial,sans-serif;font-size:10px;letter-spacing:7px;color:${brand.gold};margin-top:5px">PACK</div>

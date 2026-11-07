@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 const SEAL_TEXT = "ROMA PACK · SARL AU · RABAT · MAROC · ICE 003990345000040 · ";
@@ -15,11 +16,8 @@ export function TrustSeal({ id, label, className }: { id: string; label: string;
           <textPath href={`#${pathId}`}>{SEAL_TEXT}</textPath>
         </text>
       </svg>
-      <div className="absolute inset-[24%] flex items-center justify-center rounded-full border border-current/25">
-        <svg viewBox="0 0 32 32" aria-hidden="true" className="size-1/2">
-          <path d="M8 23.5V13.2a8 8 0 0 1 16 0v10.3" fill="none" stroke="currentColor" strokeWidth="1.6" />
-          <path d="M12.2 23.5v-8.2a3.8 3.8 0 0 1 7.6 0v8.2" fill="none" stroke="currentColor" strokeWidth="1.4" />
-        </svg>
+      <div className="absolute inset-[22%] overflow-hidden rounded-full border border-current/25 bg-white">
+        <Image src="/brand/emblem.png" alt="" fill sizes="64px" className="object-cover" />
       </div>
     </div>
   );
