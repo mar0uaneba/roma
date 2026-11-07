@@ -64,12 +64,12 @@ const fr = {
     pillarsEyebrow: "Roma Pack",
     pillarsTitle: "Un seul fournisseur pour tout ce qui part avec votre client.",
     pillars: [
-      { title: "Sept gammes", text: "Pâtisserie, sacs, boissons, barquettes, expédition, fermeture et projets à la marque." },
+      { title: "Huit gammes", text: "Pâtisserie, sacs, boissons, barquettes, expédition, fermeture, hygiène et projets à la marque." },
       { title: "Standard ou à votre marque", text: "Des formats disponibles pour démarrer, et l'impression quand le volume le justifie." },
       { title: "Un devis sur votre besoin", text: "Produit, quantité, cadence : la proposition part de ce que vous emballez vraiment." },
     ],
     rangesEyebrow: "Gammes",
-    rangesTitle: "Sept familles. Un seul interlocuteur.",
+    rangesTitle: "Huit familles. Un seul interlocuteur.",
     showcaseEyebrow: "En situation",
     showcaseTitle: "Pensé pour le comptoir, la livraison et le colis.",
     showcase: [
@@ -241,7 +241,7 @@ const fr = {
     hosting:
       "Hébergement : Vercel Inc. Les données de formulaire sont stockées dans Supabase uniquement lorsque le projet est configuré.",
     photos:
-      "Les photographies proviennent d'Unsplash et de Pexels, sous leurs licences respectives. Elles illustrent des familles d'emballages et ne sont pas des clichés des stocks de Roma Pack.",
+      "Les photos des produits Roma Pack (gobelets, bols, barquettes, boîtes, film alimentaire et gants) sont fournies par Roma Pack. Les autres photographies proviennent d'Unsplash et de Pexels, sous leurs licences respectives, et illustrent des familles d'emballages.",
   },
   privacy: {
     p1: "Le formulaire de devis collecte le nom de l'entreprise, un contact, un e-mail, un téléphone, une ville, un secteur, une référence, une quantité et le message.",

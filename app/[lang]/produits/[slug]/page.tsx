@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { ChevronRight } from "lucide-react";
-import Image from "next/image";
+import { Check, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/catalog/product-card";
+import { ProductGallery } from "@/components/catalog/product-gallery";
 import { WhatsAppIcon } from "@/components/brand/whatsapp-icon";
 import { Reveal } from "@/components/motion/reveal";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { getCategories, getCategory, isPurchasable } from "@/lib/catalog";
 import { AddToCart } from "@/components/shop/add-to-cart";
 import { formatMoney } from "@/lib/shop/money";
 import { format, getDictionary, isLocale, languageAlternates, localePath, locales } from "@/lib/i18n";
+import { getTrust } from "@/lib/i18n/trust";
 import { getLocalizedProducts, getProduct, getPublicProducts } from "@/lib/products";
 import { site, whatsappHref } from "@/lib/site";
 
@@ -36,6 +37,7 @@ export default async function Page({ params }: PageProps<"/[lang]/produits/[slug
   const { lang, slug } = await params;
   if (!isLocale(lang)) notFound();
   const t = getDictionary(lang);
+  const trust = getTrust(lang);
   const [product, products] = await Promise.all([getProduct(slug, lang), getLocalizedProducts(lang)]);
   if (!product) notFound();
 
@@ -71,14 +73,13 @@ export default async function Page({ params }: PageProps<"/[lang]/produits/[slug
         </span>
       </nav>
       <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:gap-16">
-        <Reveal className="relative">
-          <div className="relative aspect-[4/5] overflow-hidden bg-line lg:sticky lg:top-28">
-            <Image src={product.image} alt={product.imageAlt} fill priority sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
-          </div>
-        </Reveal>
+        <div className="relative">
+          <ProductGallery images={[product.image, ...(product.images ?? [])]} alt={product.imageAlt} label={lang === "ar" ? "صورة" : "Photo"} />
+        </div>
         <Reveal delay={0.1}>
           <p className="text-xs uppercase tracking-[0.22em] text-gold">{category?.name}</p>
           <h1 className="mt-3 font-serif text-5xl leading-[1.02] tracking-tight text-ink md:text-6xl">{product.name}</h1>
+          <div className="line-grow mt-6 h-px w-24 bg-gradient-to-r from-accent to-gold rtl:bg-gradient-to-l" aria-hidden="true" />
           <p className="mt-6 text-lg leading-8 text-muted">{product.summary}</p>
           <p className="mt-6 leading-7">{product.description}</p>
           <dl className="mt-10 grid gap-8 border-y border-line py-8 sm:grid-cols-2">
@@ -150,6 +151,19 @@ export default async function Page({ params }: PageProps<"/[lang]/produits/[slug
               )}
             </div>
           )}
+          <ul className="mt-10 grid gap-3 border-t border-line pt-8 sm:grid-cols-3">
+            {trust.productTrust.map((point) => (
+              <li key={point} className="flex items-center gap-2.5 text-sm text-ink">
+                <span className="inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-gold/50 text-gold">
+                  <Check className="size-3.5" aria-hidden="true" />
+                </span>
+                {point}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-xs text-muted">
+            {site.legalName} · SARL AU · ICE <span className="ltr-nums">{site.ice}</span> · RC <span className="ltr-nums">{site.rc}</span>
+          </p>
         </Reveal>
       </div>
       {related.length > 0 ? (

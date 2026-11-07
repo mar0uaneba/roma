@@ -1,4 +1,4 @@
-import { ArrowRight, Boxes, Check, FileText, Palette } from "lucide-react";
+import { ArrowRight, Boxes, Check, FileText, HandCoins, Palette, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -6,15 +6,18 @@ import { Dieline } from "@/components/home/dieline";
 import { Faq } from "@/components/home/faq";
 import { FeaturedRail } from "@/components/home/featured-rail";
 import { Hero, type HeroSlide } from "@/components/home/hero";
+import { LegalCard } from "@/components/home/legal-card";
 import { RangeStage } from "@/components/home/range-stage";
 import { WhatsAppIcon } from "@/components/brand/whatsapp-icon";
 import { Reveal } from "@/components/motion/reveal";
 import { Button } from "@/components/ui/button";
 import { getCategories, getSectors, type Product } from "@/lib/catalog";
-import { getDictionary, localePath, type Locale } from "@/lib/i18n";
-import { whatsappHref } from "@/lib/site";
+import { format, getDictionary, localePath, type Locale } from "@/lib/i18n";
+import { getTrust } from "@/lib/i18n/trust";
+import { site, whatsappHref } from "@/lib/site";
 
 const pillarIcons = [Boxes, Palette, FileText];
+const trustIcons = [ShieldCheck, HandCoins, FileText, Palette];
 
 const showcaseTiles = [
   { image: "/images/croissant.jpg", href: "/produits?categorie=sacs", span: "md:col-span-4 md:row-span-2" },
@@ -35,6 +38,7 @@ function Eyebrow({ children }: { children: ReactNode }) {
 
 export function HomePage({ lang, featured }: { lang: Locale; featured: Product[] }) {
   const t = getDictionary(lang);
+  const trust = getTrust(lang);
   const categories = getCategories(lang);
   const sectors = getSectors(lang);
   const categoryNames = Object.fromEntries(categories.map((category) => [category.slug, category.name]));
@@ -67,6 +71,30 @@ export function HomePage({ lang, featured }: { lang: Locale; featured: Product[]
         </div>
       </div>
 
+      {/* Trust bar: verifiable commitments only. */}
+      <section aria-label={trust.barLabel} className="border-b border-line bg-card">
+        <ul className="mx-auto grid max-w-6xl sm:grid-cols-2 lg:grid-cols-4">
+          {trust.items.map((item, index) => {
+            const Icon = trustIcons[index] ?? ShieldCheck;
+            return (
+              <li
+                key={item.title}
+                data-spotlight=""
+                className="spotlight relative flex items-start gap-4 border-line px-5 py-7 sm:[&:nth-child(2n)]:border-s lg:border-s lg:first:border-s-0 max-lg:[&:nth-child(n+3)]:border-t max-sm:[&:nth-child(n+2)]:border-t"
+              >
+                <span className="relative inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-gold/40 bg-background text-accent">
+                  <Icon className="size-5" strokeWidth={1.5} aria-hidden="true" />
+                </span>
+                <span>
+                  <span className="block font-serif text-lg text-ink">{item.title}</span>
+                  <span className="mt-1 block text-sm leading-6 text-muted">{format(item.text, { rc: site.rc, ice: site.ice })}</span>
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
       {/* Pillars */}
       <section className="mx-auto max-w-6xl px-5 py-20 md:py-28">
         <div className="grid gap-12 lg:grid-cols-12">
@@ -78,10 +106,12 @@ export function HomePage({ lang, featured }: { lang: Locale; featured: Product[]
             {t.home.pillars.map((pillar, index) => {
               const Icon = pillarIcons[index] ?? Boxes;
               return (
-                <Reveal key={pillar.title} delay={index * 0.1} className="group bg-card p-6 transition-colors duration-500 hover:bg-ink hover:text-background">
+                <Reveal key={pillar.title} delay={index * 0.1} className="group h-full bg-card transition-colors duration-500 hover:bg-ink hover:text-background">
+                  <div data-spotlight="" className="spotlight spotlight-light relative h-full p-6">
                   <Icon className="size-6 text-accent" strokeWidth={1.4} aria-hidden="true" />
                   <h3 className="mt-10 font-serif text-2xl">{pillar.title}</h3>
                   <p className="mt-3 text-sm leading-6 text-muted transition-colors group-hover:text-background/70">{pillar.text}</p>
+                  </div>
                 </Reveal>
               );
             })}
@@ -120,14 +150,20 @@ export function HomePage({ lang, featured }: { lang: Locale; featured: Product[]
               const copy = t.home.showcase[index];
               return (
                 <Reveal key={tile.image} delay={(index % 3) * 0.08} className={tile.span}>
-                  <Link href={localePath(lang, tile.href)} className="group relative block h-full overflow-hidden bg-ink">
-                    <Image
-                      src={tile.image}
-                      alt=""
-                      fill
-                      sizes="(min-width: 768px) 40vw, 100vw"
-                      className="media-zoom object-cover opacity-90 transition-opacity duration-500 group-hover:opacity-100"
-                    />
+                  <Link
+                    href={localePath(lang, tile.href)}
+                    data-spotlight=""
+                    className="spotlight spotlight-light sd-unveil group relative block h-full overflow-hidden bg-ink"
+                  >
+                    <div className="sd-parallax absolute inset-0">
+                      <Image
+                        src={tile.image}
+                        alt=""
+                        fill
+                        sizes="(min-width: 768px) 40vw, 100vw"
+                        className="media-zoom object-cover opacity-90 transition-opacity duration-500 group-hover:opacity-100"
+                      />
+                    </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/10 to-transparent" />
                     <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5 text-background md:p-6">
                       <div>
@@ -235,14 +271,58 @@ export function HomePage({ lang, featured }: { lang: Locale; featured: Product[]
             <h2 className="mt-4 font-serif text-4xl tracking-tight text-ink md:text-5xl">{t.home.processTitle}</h2>
           </Reveal>
         </div>
-        <div className="mx-auto grid max-w-6xl md:grid-cols-3">
-          {t.home.steps.map((step, index) => (
-            <Reveal key={step.title} delay={index * 0.12} className="border-line px-5 py-12 md:border-s md:first:border-s-0">
-              <p className="font-serif text-6xl text-accent ltr-nums">0{index + 1}</p>
-              <h3 className="mt-5 font-serif text-3xl text-ink">{step.title}</h3>
-              <p className="mt-3 max-w-xs text-sm leading-6 text-muted">{step.text}</p>
-            </Reveal>
-          ))}
+        <div className="relative mx-auto max-w-6xl px-5 pt-12">
+          {/* Timeline rail that draws itself while scrolling. */}
+          <div aria-hidden="true" className="absolute inset-x-5 top-[4.375rem] hidden h-px bg-line md:block">
+            <div className="sd-draw h-full bg-gradient-to-r from-accent via-accent to-gold" />
+          </div>
+          <div className="grid gap-10 pb-16 md:grid-cols-3 md:gap-8 md:pb-20">
+            {t.home.steps.map((step, index) => (
+              <Reveal key={step.title} delay={index * 0.12} className="relative">
+                <div>
+                  <span className="relative z-10 inline-flex size-11 items-center justify-center rounded-full border border-accent/40 bg-card font-serif text-lg text-accent shadow-[0_0_0_6px_var(--card)] ltr-nums">
+                    0{index + 1}
+                  </span>
+                  <h3 className="mt-6 font-serif text-3xl text-ink">{step.title}</h3>
+                  <p className="mt-3 max-w-xs text-sm leading-6 text-muted">{step.text}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Identity: who you are dealing with. */}
+      <section className="relative overflow-hidden py-20 md:py-28">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 opacity-60"
+          style={{
+            backgroundImage: "linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px)",
+            backgroundSize: "56px 56px",
+            maskImage: "radial-gradient(ellipse at center, black 30%, transparent 75%)",
+            WebkitMaskImage: "radial-gradient(ellipse at center, black 30%, transparent 75%)",
+          }}
+        />
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 lg:grid-cols-12">
+          <Reveal className="lg:col-span-5">
+            <Eyebrow>{trust.identityEyebrow}</Eyebrow>
+            <h2 className="mt-4 font-serif text-4xl leading-[1.02] tracking-tight text-ink md:text-5xl">{trust.identityTitle}</h2>
+            <p className="mt-6 max-w-md leading-7 text-muted">{trust.identityText}</p>
+            <ul className="mt-8 space-y-3">
+              {trust.productTrust.map((point) => (
+                <li key={point} className="flex items-center gap-3 text-sm text-ink">
+                  <span className="inline-flex size-6 items-center justify-center rounded-full bg-accent/10 text-accent">
+                    <Check className="size-3.5" aria-hidden="true" />
+                  </span>
+                  {point}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+          <Reveal className="lg:col-span-7" delay={0.12}>
+            <LegalCard lang={lang} className="lift mx-auto max-w-xl rotate-[-0.6deg] lg:me-0" />
+          </Reveal>
         </div>
       </section>
 
@@ -288,7 +368,7 @@ export function HomePage({ lang, featured }: { lang: Locale; featured: Product[]
             <div className="relative aspect-[4/5] overflow-hidden">
               <Image src="/images/pastry-box.jpg" alt={t.home.ctaImageAlt} fill sizes="(min-width: 768px) 40vw, 100vw" className="object-cover" />
             </div>
-            <div className="absolute -bottom-5 -start-5 hidden border border-background/15 bg-ink/80 px-5 py-4 backdrop-blur md:block">
+            <div className="float-soft absolute -bottom-5 -start-5 hidden border border-background/15 bg-ink/80 px-5 py-4 backdrop-blur md:block">
               <p className="text-xs uppercase tracking-[0.22em] text-gold">{t.contact.hours}</p>
             </div>
           </Reveal>

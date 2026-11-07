@@ -1,14 +1,16 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from "motion/react";
-import { ArrowDown, ArrowRight } from "lucide-react";
+import { ArrowDown, ArrowRight, Check } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useI18n } from "@/components/i18n/locale-provider";
+import { TrustSeal } from "@/components/brand/trust-seal";
 import { WhatsAppIcon } from "@/components/brand/whatsapp-icon";
 import { Button } from "@/components/ui/button";
 import { localePath } from "@/lib/i18n/config";
+import { getTrust } from "@/lib/i18n/trust";
 import { cn } from "@/lib/utils";
 
 export type HeroSlide = { image: string; alt: string; label: string; href: string };
@@ -18,6 +20,7 @@ const DURATION = 6500;
 
 export function Hero({ slides, whatsapp }: { slides: HeroSlide[]; whatsapp: string | null }) {
   const { lang, t } = useI18n();
+  const trust = getTrust(lang);
   const reduce = useReducedMotion();
   const ref = useRef<HTMLElement>(null);
   const [index, setIndex] = useState(0);
@@ -41,6 +44,7 @@ export function Hero({ slides, whatsapp }: { slides: HeroSlide[]; whatsapp: stri
       ref={ref}
       className="grain relative flex min-h-[100svh] items-end overflow-hidden bg-ink text-background"
       aria-roledescription="carousel"
+      data-spotlight=""
     >
       <motion.div className="absolute inset-0" style={reduce ? undefined : { y: imageY }}>
         <AnimatePresence initial={false}>
@@ -76,6 +80,9 @@ export function Hero({ slides, whatsapp }: { slides: HeroSlide[]; whatsapp: stri
       {/* Legibility: directional wash toward the text side, plus a floor gradient. */}
       <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/75 to-ink/10 rtl:bg-gradient-to-l" />
       <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/10 to-ink/50" />
+
+      {/* Warm glow that follows the pointer (desktop only). */}
+      <div aria-hidden="true" className="hero-glow pointer-events-none absolute inset-0 hidden mix-blend-screen md:block" />
 
       {/* Fine industrial grid. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 mx-auto hidden max-w-6xl px-5 md:block">
@@ -150,6 +157,32 @@ export function Hero({ slides, whatsapp }: { slides: HeroSlide[]; whatsapp: stri
             </a>
           ) : null}
         </motion.div>
+
+        <motion.ul
+          className="mt-10 flex flex-wrap gap-x-6 gap-y-3 border-t border-background/10 pt-6 text-sm text-background/70"
+          initial={reduce ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, ease, delay: 1.05 }}
+        >
+          {trust.heroBadges.map((badge) => (
+            <li key={badge} className="flex items-center gap-2">
+              <span className="inline-flex size-5 items-center justify-center rounded-full border border-gold/50 text-gold">
+                <Check className="size-3" aria-hidden="true" />
+              </span>
+              {badge}
+            </li>
+          ))}
+        </motion.ul>
+      </motion.div>
+
+      {/* Company seal */}
+      <motion.div
+        className="absolute end-[max(1.25rem,calc((100vw-72rem)/2+1.25rem))] top-32 hidden text-gold/80 lg:block"
+        initial={reduce ? false : { opacity: 0, scale: 0.85 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.2, ease, delay: 0.9 }}
+      >
+        <TrustSeal id="hero" label={trust.sealLabel} className="size-32" />
       </motion.div>
 
       {/* Slide indicator */}

@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Logo } from "@/components/brand/logo";
 import { useI18n } from "@/components/i18n/locale-provider";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
+import { SpotlightTracker } from "@/components/motion/spotlight-tracker";
 import { CartButton } from "@/components/shop/cart-button";
 import { Button } from "@/components/ui/button";
 import { localePath } from "@/lib/i18n/config";
@@ -34,18 +35,22 @@ export function Header() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-40 transition-[background-color,box-shadow,border-color,color] duration-500",
-        overHero
-          ? "border-b border-transparent bg-transparent text-background"
-          : "border-b border-line/80 bg-background/85 text-ink shadow-[0_10px_40px_rgba(14,13,12,0.05)] backdrop-blur-xl backdrop-saturate-150",
+        "fixed inset-x-0 top-0 z-40 transition-[padding] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        overHero ? "px-0 pt-0" : "px-3 pt-3 md:px-5",
       )}
     >
+      <SpotlightTracker />
       <div
         className={cn(
-          "mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 transition-[height] duration-500",
-          overHero ? "h-20 md:h-24" : "h-16 md:h-[4.5rem]",
+          "relative mx-auto flex max-w-6xl items-center justify-between gap-4 overflow-hidden px-5 transition-[height,background-color,box-shadow,border-color,color,border-radius] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          overHero
+            ? "h-20 border border-transparent bg-transparent text-background md:h-24"
+            : "h-14 rounded-[6px] border border-line/70 bg-background/80 text-ink shadow-[0_18px_50px_-24px_rgba(14,13,12,0.35)] backdrop-blur-xl backdrop-saturate-150 md:h-16",
         )}
       >
+        {!overHero ? (
+          <span aria-hidden="true" className="sd-progress pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-accent via-accent to-gold" />
+        ) : null}
         <Link href={localePath(lang)} aria-label={t.common.home} className="shrink-0">
           <Logo />
         </Link>

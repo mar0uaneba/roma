@@ -3,6 +3,7 @@ import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { QuoteForm } from "@/components/forms/quote-form";
+import { LegalCard } from "@/components/home/legal-card";
 import { WhatsAppIcon } from "@/components/brand/whatsapp-icon";
 import { getCategories, getSectors } from "@/lib/catalog";
 import { getDictionary, isLocale, languageAlternates, type Locale } from "@/lib/i18n";
@@ -35,7 +36,7 @@ export default async function Page({ params, searchParams }: PageProps<"/[lang]/
             <span className="h-px w-8 bg-current opacity-60" aria-hidden="true" />
             {t.contact.eyebrow}
           </p>
-          <h1 className="mt-4 font-serif text-5xl leading-[1.02] tracking-tight text-ink">{t.contact.title}</h1>
+          <h1 className="mt-4 font-serif text-5xl leading-[1.02] tracking-tight text-ink md:text-6xl">{t.contact.title}</h1>
           <p className="mt-5 leading-7 text-muted">{t.contact.lead}</p>
           <ul className="mt-10 divide-y divide-line border-y border-line text-sm">
             <li className="flex items-center gap-4 py-4">
@@ -75,8 +76,10 @@ export default async function Page({ params, searchParams }: PageProps<"/[lang]/
             </li>
           </ul>
           {!site.phone && !site.email && !whatsapp ? <p className="mt-6 text-sm leading-6 text-muted">{t.contact.formOnly}</p> : null}
+          <LegalCard lang={lang} compact className="mt-10" />
         </div>
-        <div className="border border-line bg-card p-6 shadow-[0_30px_80px_-40px_rgba(14,13,12,0.25)] md:p-10 lg:col-span-7">
+        <div className="relative border border-line bg-card p-6 shadow-[0_40px_90px_-45px_rgba(14,13,12,0.4)] md:p-10 lg:col-span-7">
+          <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-accent via-accent to-gold" />
           <Suspense fallback={<div className="min-h-[36rem]" />}>
             <Form lang={lang} searchParams={searchParams} />
           </Suspense>

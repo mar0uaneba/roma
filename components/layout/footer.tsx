@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand/logo";
+import { TrustSeal } from "@/components/brand/trust-seal";
 import { getCategories } from "@/lib/catalog";
 import { format, getDictionary, localePath, type Locale } from "@/lib/i18n";
+import { getTrust } from "@/lib/i18n/trust";
 import { navItems, site, siteAddress, telHref, whatsappHref } from "@/lib/site";
 
 export function Footer({ lang }: { lang: Locale }) {
@@ -9,20 +11,31 @@ export function Footer({ lang }: { lang: Locale }) {
   const categories = getCategories(lang);
   const address = siteAddress(lang);
   const whatsapp = whatsappHref(t.contact.whatsappMessage);
+  const trust = getTrust(lang);
 
   return (
     <footer className="relative overflow-hidden bg-ink text-background">
+      <div aria-hidden="true" className="pointer-events-none absolute -top-px inset-x-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+      <div aria-hidden="true" className="pointer-events-none absolute -bottom-40 start-1/2 size-[40rem] -translate-x-1/2 rounded-full bg-accent/10 blur-[140px] rtl:translate-x-1/2" />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -bottom-10 start-1/2 -translate-x-1/2 select-none whitespace-nowrap font-serif text-[22vw] leading-none text-background/[0.03] rtl:translate-x-1/2"
+        className="wordmark-outline pointer-events-none absolute -bottom-[3vw] start-1/2 -translate-x-1/2 select-none whitespace-nowrap font-serif text-[19vw] leading-none rtl:translate-x-1/2"
         dir="ltr"
       >
         ROMA PACK
       </div>
-      <div className="relative mx-auto grid max-w-6xl gap-12 px-5 py-16 md:grid-cols-12 md:py-20">
+      <div className="relative mx-auto grid max-w-6xl gap-12 px-5 pb-[12vw] pt-16 md:grid-cols-12 md:pt-20">
         <div className="md:col-span-4">
           <Logo />
           <p className="mt-5 max-w-xs text-sm leading-6 text-background/65">{format(t.footer.blurb, { city: t.site.city })}</p>
+          <div className="mt-8 flex items-center gap-4">
+            <TrustSeal id="footer" label={trust.sealLabel} className="size-20 shrink-0 text-gold/70" />
+            <p className="text-xs leading-5 text-background/55">
+              <span className="block text-background/80">{trust.verified}</span>
+              {site.legalName} · SARL AU
+              <span className="block ltr-nums">ICE {site.ice}</span>
+            </p>
+          </div>
         </div>
         <div className="md:col-span-2">
           <p className="text-xs uppercase tracking-[0.18em] text-background/45">{t.footer.site}</p>
