@@ -24,7 +24,7 @@ async function EmailPreview({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const email = await getEmail(id);
   if (!email) notFound();
-  const back = email.customerId ? `/admin/customers/${email.customerId}` : email.orderId ? `/admin/orders/${email.orderId}` : "/admin";
+  const back = email.quoteId ? `/admin/quotes/${email.quoteId}` : email.customerId ? `/admin/customers/${email.customerId}` : email.orderId ? `/admin/orders/${email.orderId}` : "/admin";
 
   return (
     <>

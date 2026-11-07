@@ -126,6 +126,7 @@ function mapEmail(row: Row): EmailLog {
     id: String(row.id),
     customerId: str(row.customer_id),
     orderId: str(row.order_id),
+    quoteId: str(row.quote_id),
     toEmail: String(row.to_email),
     subject: String(row.subject),
     html: String(row.html ?? ""),
@@ -151,6 +152,7 @@ function mapQuote(row: Row): QuoteRequest {
     status: (row.status as QuoteRequest["status"]) ?? "new",
     locale: locale(row.locale),
     draftOrderId: str(row.draft_order_id),
+    repliedAt: str(row.replied_at),
     createdAt: String(row.created_at),
   };
 }
@@ -521,7 +523,7 @@ export async function updateCustomer(id: string, patch: Row) {
 
 /* ── E-mail log ──────────────────────────────────────────────────────── */
 
-export async function logEmail(entry: Omit<EmailLog, "id" | "createdAt">) {
+export async function logEmail(entry: Omit<EmailLog, "id" | "createdAt" | "quoteId"> & { quoteId?: string | null }) {
   const client = getDb();
   if (!client) return null;
   const { data } = await client
@@ -529,6 +531,7 @@ export async function logEmail(entry: Omit<EmailLog, "id" | "createdAt">) {
     .insert({
       customer_id: entry.customerId,
       order_id: entry.orderId,
+      ...(entry.quoteId ? { quote_id: entry.quoteId } : {}),
       to_email: entry.toEmail,
       subject: entry.subject,
       html: entry.html,
@@ -545,6 +548,13 @@ export async function listOrderEmails(orderId: string): Promise<EmailLog[]> {
   const client = getDb();
   if (!client) return demoEmails().filter((email) => email.orderId === orderId);
   const { data } = await client.from("email_log").select("*").eq("order_id", orderId).order("created_at", { ascending: false });
+  return (data ?? []).map((row) => mapEmail(row as Row));
+}
+
+export async function listQuoteEmails(quoteId: string): Promise<EmailLog[]> {
+  const client = getDb();
+  if (!client) return [];
+  const { data } = await client.from("email_log").select("*").eq("quote_id", quoteId).order("created_at", { ascending: false });
   return (data ?? []).map((row) => mapEmail(row as Row));
 }
 

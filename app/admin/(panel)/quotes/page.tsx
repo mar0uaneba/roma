@@ -4,7 +4,7 @@ import { requireAdmin } from "@/lib/admin/auth";
 import { Suspense } from "react";
 import { quoteToDraftAction, setQuoteStatusAction } from "@/app/actions/admin";
 import { SubmitButton } from "@/components/admin/client";
-import { Card, Empty, Flash, Loading, PageHeader, StatusBadge, type Tone } from "@/components/admin/ui";
+import { Card, Empty, Flash, Loading, PageHeader, StatusBadge, buttonClass, type Tone } from "@/components/admin/ui";
 import { dateTime } from "@/lib/admin/format";
 import { listQuotes } from "@/lib/shop/repo";
 
@@ -36,7 +36,7 @@ async function Quotes({ searchParams }: { searchParams: Search }) {
     <>
       <PageHeader
         title="Quote requests"
-        description="Requests from the contact form (custom, printed or bulk packaging). Turn one into a draft to send a priced offer."
+        description="Requests from the website quote form. Open one to reply by e-mail in the customer's language, or turn it into a priced draft offer."
       />
       <Flash ok={params.ok} err={params.err} />
       {quotes.length === 0 ? (
@@ -48,9 +48,14 @@ async function Quotes({ searchParams }: { searchParams: Search }) {
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="font-medium">{quote.company}</h2>
+                    <h2 className="font-medium">
+                      <Link href={`/admin/quotes/${quote.id}`} className="hover:text-adm-accent">
+                        {quote.company}
+                      </Link>
+                    </h2>
                     <StatusBadge tone={statusMeta[quote.status]?.tone ?? "gray"}>{statusMeta[quote.status]?.label ?? quote.status}</StatusBadge>
                     {quote.locale === "ar" ? <StatusBadge tone="gray">AR</StatusBadge> : null}
+                    {quote.repliedAt ? <StatusBadge tone="green">Replied {dateTime(quote.repliedAt)}</StatusBadge> : null}
                     <span className="text-xs text-adm-muted">{dateTime(quote.createdAt)}</span>
                   </div>
                   <p className="mt-1 text-sm text-adm-muted">
@@ -66,6 +71,9 @@ async function Quotes({ searchParams }: { searchParams: Search }) {
                   </p>
                 </div>
                 <div className="flex shrink-0 flex-col gap-2 lg:w-56">
+                  <Link href={`/admin/quotes/${quote.id}`} className={buttonClass("primary", "sm", "w-full")}>
+                    {quote.repliedAt ? "Open conversation" : "Reply"}
+                  </Link>
                   {quote.draftOrderId ? (
                     <Link href={`/admin/drafts/${quote.draftOrderId}`} className="text-sm text-adm-accent">
                       Open draft →
@@ -73,7 +81,7 @@ async function Quotes({ searchParams }: { searchParams: Search }) {
                   ) : (
                     <form action={quoteToDraftAction}>
                       <input type="hidden" name="id" value={quote.id} />
-                      <SubmitButton size="sm" className="w-full">
+                      <SubmitButton size="sm" variant="secondary" className="w-full">
                         Create draft offer
                       </SubmitButton>
                     </form>

@@ -94,6 +94,7 @@ export type EmailLog = {
   id: string;
   customerId: string | null;
   orderId: string | null;
+  quoteId: string | null;
   toEmail: string;
   subject: string;
   html: string;
@@ -117,6 +118,7 @@ export type QuoteRequest = {
   status: "new" | "in_review" | "quoted" | "closed";
   locale: Locale;
   draftOrderId: string | null;
+  repliedAt: string | null;
   createdAt: string;
 };
 

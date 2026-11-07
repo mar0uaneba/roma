@@ -14,6 +14,7 @@ import {
   messageEmail,
   offerEmail,
   orderConfirmedEmail,
+  quoteReplyEmail,
   sendCustomerEmail,
   shippedEmail,
 } from "@/lib/shop/emails";
@@ -387,6 +388,34 @@ export async function setQuoteStatusAction(form: FormData) {
     if (!["new", "in_review", "quoted", "closed"].includes(status)) throw new Error("Unknown status.");
     await updateQuote(text(form, "id"), { status });
     return "Status updated.";
+  });
+}
+
+export async function replyQuoteAction(form: FormData) {
+  const id = text(form, "id");
+  await run(`/admin/quotes/${id}`, async () => {
+    const quote = await getQuote(id);
+    if (!quote) throw new Error("Quote not found.");
+    const subject = text(form, "subject");
+    const message = text(form, "message");
+    if (!subject || !message) throw new Error("Subject and message are required.");
+    const result = await sendCustomerEmail(quote.email, quoteReplyEmail(quote, subject, message), {
+      customerId: null,
+      orderId: null,
+      quoteId: id,
+    });
+    if (result.state === "failed") throw new Error(`E-mail failed: ${result.detail}`);
+    if (result.state === "sent") {
+      const status = quote.status === "new" ? "in_review" : quote.status;
+      try {
+        await updateQuote(id, { status, replied_at: new Date().toISOString() });
+      } catch {
+        // Database without migration 005: keep the status change at least.
+        await updateQuote(id, { status });
+      }
+      return `Reply sent to ${quote.email}.`;
+    }
+    return `Saved in history, not sent (${result.detail}).`;
   });
 }
 

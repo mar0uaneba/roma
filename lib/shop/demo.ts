@@ -141,6 +141,7 @@ export function demoEmails(): EmailLog[] {
       id: "m1",
       customerId: "c1",
       orderId: "o6",
+      quoteId: null,
       toEmail: "salma@example.ma",
       subject: "Votre commande RP-1006 est expédiée",
       html: "<p>Bonjour Salma,</p><p>Votre commande RP-1006 est partie avec Amana.</p>",
@@ -168,6 +169,7 @@ export function demoQuotes(): QuoteRequest[] {
       status: "new",
       locale: "fr",
       draftOrderId: null,
+      repliedAt: null,
       createdAt: at(0.4),
     },
   ];
